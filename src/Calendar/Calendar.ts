@@ -1,4 +1,4 @@
-﻿import Calendar_ColorUtils = require("./Utils/Color");
+import Calendar_ColorUtils = require("./Utils/Color");
 import Calendar_Contracts = require("./Contracts");
 import Calendar_Utils_Guid = require("./Utils/Guid");
 import Controls = require("VSS/Controls");
@@ -86,7 +86,15 @@ export class Calendar extends Controls.Control<CalendarOptions> {
         //  Determine optimal aspect ratio
         var aspectRatio = $('.leftPane').width() /($('.leftPane').height() - 85);
         aspectRatio = parseFloat(aspectRatio.toFixed(1));
-        var firstDay = Culture.getDateTimeFormat().FirstDayOfWeek;
+
+        // Determine the first day of the week based on user's setting.
+        // If the setting doesn't exist yet, set it with the default for the current Culture
+        var firstDayCookie = $.cookie("example");
+        if (!firstDayCookie) {
+            $.cookie("example", Culture.getDateTimeFormat().FirstDayOfWeek.toString(), { path: '/' })
+            firstDayCookie = $.cookie("example");
+        }
+        var firstDay = parseInt(firstDayCookie);
         
         this._element.fullCalendar($.extend({
             eventRender: this._getComposedCallback(FullCalendarCallbackType.eventRender),
